@@ -19,6 +19,10 @@ var optimizationCoefficient = 0.0;
 
 var position;
 var translateSpeed = 0.1;
+var minX = -2.1;
+var maxX = 21.0;
+var minY = -1.3;
+var maxY = 1.0;
 
 $(function () {
     resizeWindow();
@@ -228,28 +232,48 @@ $(document).keydown(function (e) {
         case 37: // left
             optimizationCoefficient = 0.0;
             position = body.GetPosition();
-            position.x -= translateSpeed;
+            if(position.x >= minX + translateSpeed){
+                position.x -= translateSpeed;
+            }
+            else{
+                position.x = minX;
+            }
             body.SetTransform(position, body.GetAngle());
             break;
 
         case 38: // up
             optimizationCoefficient = 0.0;
             position = body.GetPosition();
-            position.y += translateSpeed;
+            if(position.y <= maxY - translateSpeed){
+                position.y += translateSpeed;
+            }
+            else{
+                position.y = maxY;
+            }
             body.SetTransform(position, body.GetAngle());
             break;
 
         case 39: // right
             optimizationCoefficient = 0.0;
             position = body.GetPosition();
-            position.x += translateSpeed;
+            if(position.x <= maxX - translateSpeed){
+                position.x += translateSpeed;
+            }
+            else{
+                position.x = maxX;
+            }
             body.SetTransform(position, body.GetAngle());
             break;
 
         case 40: // down
             optimizationCoefficient = 0.0;
             position = body.GetPosition();
-            position.y -= translateSpeed;
+            if(position.y >= minY + translateSpeed){
+                position.y -= translateSpeed;
+            }
+            else{
+                position.y = minY;
+            }
             body.SetTransform(position, body.GetAngle());
             break;
 
@@ -310,7 +334,7 @@ TestWaveMachine.prototype.Step = function () {
     }
     $("#beakerImage").css("transform", "rotate(" + (-1 * keyAng) + "deg)");
     if(position){
-        console.log(position, ((-position.y)+1)+"%");
+        console.log(position);
         $("#beakerImage").css("left", (5 + position.x*4.875)+"%");
         $("#beakerImage").css("top", ((-position.y*6.1)+6.1)+"%");
     }
