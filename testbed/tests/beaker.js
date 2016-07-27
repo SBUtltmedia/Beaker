@@ -1,3 +1,4 @@
+//Constants
 var world = null;
 var boxWorld = null;
 var body = null;
@@ -9,11 +10,15 @@ var DEGTORAD = 0.01745329251994329576923690;
 var keyAng = 0;
 var rotationSpeed = 1;
 
+//Frame timing variables
 var prevTime;
 var curTime;
 var framerate;
 var targetFramerate = 30;
 var optimizationCoefficient = 0.0;
+
+var position;
+var translateSpeed = 0.1;
 
 $(function () {
     resizeWindow();
@@ -57,7 +62,7 @@ function TestWaveMachine() {
     var bd = new b2BodyDef();
     var ground = world.CreateBody(bd);
 
-    bd.type = b2_dynamicBody;
+    bd.type = b2_kinematicBody;
     bd.allowSleep = false;
     bd.position.Set(0, 1);
     body = world.CreateBody(bd);
@@ -163,16 +168,16 @@ function TestWaveMachine() {
 
     //body2.SetTransform((new b2Vec2(1.0, -1.0), 0));
     
-    var jd = new b2RevoluteJointDef();
-    //jd.motorSpeed = 0.05 * Math.PI;
-    jd.maxMotorTorque = 1000000;
-    jd.enableMotor = true;
-    jd.enableLimit = true;
-    jd.lowerAngle = -180 * DEGTORAD;
-    jd.upperAngle = 180 * DEGTORAD;
-    this.joint = jd.InitializeAndCreate(ground, body, new b2Vec2(0, 1));
-    jd.InitializeAndCreate(ground, body2, new b2Vec2(0, 1));
-    this.time = 0;
+//    var jd = new b2RevoluteJointDef();
+//    //jd.motorSpeed = 0.05 * Math.PI;
+//    jd.maxMotorTorque = 1000000;
+//    jd.enableMotor = true;
+//    jd.enableLimit = true;
+//    jd.lowerAngle = -180 * DEGTORAD;
+//    jd.upperAngle = 180 * DEGTORAD;
+//    this.joint = jd.InitializeAndCreate(ground, body, new b2Vec2(0, 1));
+//    jd.InitializeAndCreate(ground, body2, new b2Vec2(0, 1));
+//    this.time = 0;
 
     // setup particles
     var psd = new b2ParticleSystemDef();
@@ -221,23 +226,37 @@ $(document).keydown(function (e) {
     
     switch (e.which) {
         case 37: // left
+            position = body.GetPosition();
+            position.x -= translateSpeed;
+            body.SetTransform(position, body.GetAngle());
             break;
 
         case 38: // up
+            position = body.GetPosition();
+            position.y += translateSpeed;
+            body.SetTransform(position, body.GetAngle());
             break;
 
         case 39: // right
+            position = body.GetPosition();
+            position.x += translateSpeed;
+            body.SetTransform(position, body.GetAngle());
             break;
 
         case 40: // down
+            position = body.GetPosition();
+            position.y -= translateSpeed;
+            body.SetTransform(position, body.GetAngle());
             break;
 
         case 65: // a
             keyAng += rotationSpeed;
+            body.SetTransform(body.GetPosition(), keyAng * DEGTORAD);
             break;
 
         case 68: // d
             keyAng -= rotationSpeed;
+            body.SetTransform(body.GetPosition(), keyAng * DEGTORAD);
             break;
 
         default:
@@ -249,7 +268,7 @@ TestWaveMachine.prototype.Step = function () {
     world.Step(timeStep, velocityIterations, positionIterations);
     this.time += timeStep;
     
-    body.SetTransform(body.GetPosition(), keyAng * DEGTORAD);
+//    body.SetTransform(body.GetPosition(), keyAng * DEGTORAD);
     //body2.SetTransform(body2.GetPosition(), 0);
     
     if (world !== null) {
@@ -285,7 +304,8 @@ TestWaveMachine.prototype.Step = function () {
             }
         }
     }
-    $("#beakerImage").css("transform", "rotate(" + (-1 * keyAng) + "deg)")
+    $("#beakerImage").css("transform", "rotate(" + (-1 * keyAng) + "deg)");
+//    $("#beakerImage").css("transform", "rotate(" + (-1 * keyAng) + "deg)");
 }
 
 // Fix aspect ratio of the stage
