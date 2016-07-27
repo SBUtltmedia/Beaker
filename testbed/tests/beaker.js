@@ -185,7 +185,7 @@ function TestWaveMachine() {
 
     // setup particles
     var psd = new b2ParticleSystemDef();
-    psd.radius = 0.1; //0.100
+    psd.radius = 0.15; //0.100
     psd.dampingStrength = 0;
     //psd.flags = b2_viscousParticle;
     // psd.strength = 1;
@@ -194,8 +194,8 @@ function TestWaveMachine() {
     var particleSystem = world.CreateParticleSystem(psd);
     var box = new b2PolygonShape();
     var box2 = new b2PolygonShape();
-    var boxHeight = 14;
-    box.SetAsBoxXYCenterAngle(0.5, boxHeight, new b2Vec2(0, boxHeight), 0);
+    var boxHeight = 18;
+    box.SetAsBoxXYCenterAngle(0.3, boxHeight, new b2Vec2(0, boxHeight), 0);
 //  box2.SetAsBoxXYCenterAngle(0.6, boxHeight*3, new b2Vec2(body2.GetPosition().x,
 //  boxHeight*3), 0);
 
