@@ -53,13 +53,13 @@ function render() {
 };
 
 function initWorld() {
-    boxWorld = new TestWaveMachine();
+    boxWorld = new BeakerWorld();
     prevTime = Date.now();
     curTime = Date.now();
     render();
 }
 
-function TestWaveMachine() {
+function BeakerWorld() {
     var gravity = new b2Vec2(0, -100);
     world = new b2World(gravity);
 
@@ -292,7 +292,7 @@ $(document).keydown(function (e) {
     } 
 });
 
-TestWaveMachine.prototype.Step = function () {
+BeakerWorld.prototype.Step = function () {
     world.Step(timeStep, velocityIterations, positionIterations);
     this.time += timeStep;
     
