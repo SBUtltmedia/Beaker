@@ -1,0 +1,80 @@
+body {
+    font-family: Monospace;
+    background-color: #FFFFFF;
+    margin: 0;
+    overflow: hidden;
+}
+ 
+#beaker {
+    width: 75%;
+    height: 75%;
+    position: absolute;
+}
+ 
+#particleHolder,
+#beakerImage {
+    left: 5%;
+    top: 0%;
+    width: 30%;
+    height: 50%;
+    position: absolute;
+}
+ 
+#particleHolder {
+    z-index: 10;
+   
+}
+
+.color0{
+    background-color: #FF0000;  
+}
+
+.color1{
+    background-color: #ABCEEF;   
+}
+
+.color2{
+    background-color: #0000FF;
+}
+
+
+.color3{
+    background-color: #FFFF00;  
+}
+
+#beakerImage {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(newbeaker.svg);
+    z-index: 20;
+    opacity: 1;
+    transform-origin: 50% 83%;
+}
+
+#bigBeakerImage{
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(bigBeaker.svg);
+    z-index: 20;
+    opacity: 1;
+    left: 40.5%;
+    top: 80%;
+    width: 30%;
+    height: 40%;
+    transform:scale(1.5, 1.35);
+}
+ 
+.particle {
+    width: 3%;
+    height: 2.5%;
+   
+    position: absolute;
+    border-radius: 50%;
+}
+
+.screen {
+    background-color: white;
+    position: absolute;
+}
