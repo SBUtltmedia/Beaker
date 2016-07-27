@@ -12,6 +12,7 @@ var rotationSpeed = 1;
 var prevTime;
 var curTime;
 var framerate;
+var targetFramerate = 30;
 var optimizationCoefficient = 0.0;
 
 $(function () {
@@ -22,10 +23,10 @@ function render() {
     setTimeout(function() {
         curTime = Date.now();
         framerate = 1.0/((curTime-prevTime)/1000.0);
-        if(framerate < 30){
+        if(framerate < targetFramerate){
             optimizationCoefficient += 0.01;
         }
-        else if (framerate > 30){
+        else if (framerate > targetFramerate){
             optimizationCoefficient -= 0.01;
         }
         
