@@ -7,22 +7,35 @@ var velocityIterations = 8;
 var positionIterations = 3;
 var DEGTORAD = 0.01745329251994329576923690;
 var keyAng = 0;
-var rotationSpeed = 30;
+var rotationSpeed = 1;
 
 var prevTime;
 var curTime;
-var deltaTime;
+var framerate;
+var optimizationCoefficient = 0.0;
 
 $(function () {
     resizeWindow();
 });
 
 function render() {
-    // bring objects into world
-    if (boxWorld.Step !== undefined) {
-        boxWorld.Step();
-    }
-    requestAnimationFrame(render);
+    setTimeout(function() {
+        curTime = Date.now();
+        framerate = 1.0/((curTime-prevTime)/1000.0);
+        if(framerate < 30){
+            optimizationCoefficient += 0.01;
+        }
+        else if (framerate > 30){
+            optimizationCoefficient -= 0.01;
+        }
+        
+        // bring objects into world
+        if (boxWorld.Step !== undefined) {
+            boxWorld.Step();
+        }
+        prevTime = curTime;
+        requestAnimationFrame(render);
+    }, 1000/60);
 };
 
 function initWorld() {
@@ -183,12 +196,15 @@ function TestWaveMachine() {
         var particlePositions = world.particleSystems[counter].GetPositionBuffer();
         //console.log(particlePositions)
         for (i = 0; i < particlePositions.length; i = i + 2) {
-        console.log(particlePositions[i])
-         if(parseFloat(particlePositions[i])>0) color=1;
-        else{ color=2;
-        console.log("f");
+        //console.log(particlePositions[i])
+        if(parseFloat(particlePositions[i])>0){
+           color=1; 
+        } 
+        else{ 
+            color=2;
+//            console.log("f");
         }
-                var child = $('<div class="particle color1"  id="part' + i + '"></div>')
+            var child = $('<div class="particle color1"  id="part' + i + '"></div>')
           //  var child = $('<div class="particle color1'+color+'"  id="part' + i + '"></div>')
             $('#particleHolder').append($(child))
         }
@@ -196,33 +212,37 @@ function TestWaveMachine() {
 }
 
 $(document).keydown(function (e) {
-    switch (e.which) {
-    case 37: // left
-        break;
-
-    case 38: // up
-        keyAng += rotationSpeed * deltaTime;
-        break;
-
-    case 39: // right
-        break;
-
-    case 40: // down
-        keyAng -= rotationSpeed * deltaTime;
-        break;
-
-    default:
-        return; // exit this handler for other keys
-    }
     e.preventDefault(); // prevent the default action (scroll / move caret)
+    
+    switch (e.which) {
+        case 37: // left
+            break;
+
+        case 38: // up
+            break;
+
+        case 39: // right
+            break;
+
+        case 40: // down
+            break;
+
+        case 65: // a
+            keyAng += rotationSpeed;
+            break;
+
+        case 68: // d
+            keyAng -= rotationSpeed;
+            break;
+
+        default:
+            return; // exit this handler for other keys
+    } 
 });
 
 TestWaveMachine.prototype.Step = function () {
     world.Step(timeStep, velocityIterations, positionIterations);
     this.time += timeStep;
-    prevTime = curTime;
-    curTime = Date.now();
-    deltaTime = (curTime - prevTime)/1000.0;
     
     body.SetTransform(body.GetPosition(), keyAng * DEGTORAD);
     //body2.SetTransform(body2.GetPosition(), 0);
@@ -247,16 +267,16 @@ TestWaveMachine.prototype.Step = function () {
             var i=particlePositions.length/2;
                   //  while (i-=2) {
             for (i = 0, len=particlePositions.length; i < len; i = i + 2) {
-                //if(Math.random() > 0.5){
+                if(Math.random() > optimizationCoefficient){
                     left = particlePositions[i] *scale + 48.5;
                     top = particlePositions[i+1] *topScale + 95;
                     $("#part" + i).css({
-                        //                    "left": particlePositions[i] * 49.5 + 166,
-                        //                    "top": particlePositions[i + 1] * -49.5 + 375
+                        //"left": particlePositions[i] * 49.5 + 166,
+                        //"top": particlePositions[i + 1] * -49.5 + 375
                         "left": left + "%",
                         "top": top + "%"
                     });
-                //}
+                }
             }
         }
     }
