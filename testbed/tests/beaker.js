@@ -24,10 +24,14 @@ function render() {
         curTime = Date.now();
         framerate = 1.0/((curTime-prevTime)/1000.0);
         if(framerate < targetFramerate){
-            optimizationCoefficient += 0.01;
+            if(optimizationCoefficient <= 0.98){
+                optimizationCoefficient += 0.01;
+            }
         }
         else if (framerate > targetFramerate){
-            optimizationCoefficient -= 0.01;
+            if(optimizationCoefficient >= 0.01){
+                optimizationCoefficient -= 0.01;
+            }
         }
         
         // bring objects into world
