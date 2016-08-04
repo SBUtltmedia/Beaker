@@ -24,6 +24,9 @@ var maxX = 21.0;
 var minY = -1.3;
 var maxY = 1.0;
 
+var particleSystem;
+var deadParticles = new Array();
+
 $(function () {
     resizeWindow();
 });
@@ -62,6 +65,23 @@ function initWorld() {
 function BeakerWorld() {
     var gravity = new b2Vec2(0, -100);
     world = new b2World(gravity);
+    
+//    var listener =  {
+//        BeginContactBody: function(contact) {
+//            console.log(contact.GetFixtureA());
+//            console.log(contact.GetFixtureB());
+//        },
+//        EndContactBody: function(contact) {
+//            console.log(contact.GetFixtureA());
+//        },
+//        PostSolve: function(contact, impulse) {
+//
+//        },
+//        PreSolve: function(contact, oldManifold) {
+//
+//        }
+//    }
+//    world.SetContactListener(listener);
 
     var bd = new b2BodyDef();
     var ground = world.CreateBody(bd);
@@ -72,7 +92,7 @@ function BeakerWorld() {
     body = world.CreateBody(bd);
     bd.position.Set(7.5, -11.5);
     body2 = world.CreateBody(bd);
-
+    
     //Beaker 1
     //Bottom
     var b1 = new b2PolygonShape();
@@ -185,13 +205,13 @@ function BeakerWorld() {
 
     // setup particles
     var psd = new b2ParticleSystemDef();
-    psd.radius = 0.15; //0.100
+    psd.radius = 0.10; //0.100 //0.15
     psd.dampingStrength = 0;
     //psd.flags = b2_viscousParticle;
     // psd.strength = 1;
     //psd.maxCount=100;
     //psd.density = 1;
-    var particleSystem = world.CreateParticleSystem(psd);
+    particleSystem = world.CreateParticleSystem(psd);
     var box = new b2PolygonShape();
     var box2 = new b2PolygonShape();
     var boxHeight = 18;
@@ -208,15 +228,12 @@ function BeakerWorld() {
     var counter = world.particleSystems.length;
     while (counter--) {
         var particlePositions = world.particleSystems[counter].GetPositionBuffer();
-        //console.log(particlePositions)
         for (i = 0; i < particlePositions.length; i = i + 2) {
-        //console.log(particlePositions[i])
         if(parseFloat(particlePositions[i])>0){
            color=1; 
         } 
         else{ 
             color=2;
-//            console.log("f");
         }
             var child = $('<div class="particle color1"  id="part' + i + '"></div>')
           //  var child = $('<div class="particle color1'+color+'"  id="part' + i + '"></div>')
@@ -318,23 +335,59 @@ BeakerWorld.prototype.Step = function () {
             var topScale=  -3/4 * scale;
             var i=particlePositions.length/2;
                   //  while (i-=2) {
+            
             for (i = 0, len=particlePositions.length; i < len; i = i + 2) {
-                if(Math.random() > optimizationCoefficient){
-                    left = particlePositions[i] *scale + 48.5;
-                    top = particlePositions[i+1] *topScale + 95;
+                if(Math.random() > optimizationCoefficient && deadParticles[i] != true){
+//                    left = particlePositions[i] *scale + 48.5;
+//                    top = particlePositions[i+1] *topScale + 95;
                     $("#part" + i).css({
                         //"left": particlePositions[i] * 49.5 + 166,
                         //"top": particlePositions[i + 1] * -49.5 + 375
-                        "left": left + "%",
-                        "top": top + "%"
+                        "left": particlePositions[i] *scale + 48.5 + "%",
+                        "top": particlePositions[i+1] *topScale + 95 + "%"
                     });
+                    if(particlePositions[i+1] < -13){
+                        console.log(particlePositions[i+1]);
+                        deadParticles[i] = true;
+                    }
                 }
             }
+            
+            console.log(optimizationCoefficient);
+            
+            //CODE FOR UPDATING ALL THE DIVS AT ONCE
+            //In its current state it is slower than the old method above probably
+            //due to all the string concats
+//            var parent= '<div id="parent">\n';
+//            
+//            for (i = 0, len=particlePositions.length; i < len; i = i + 2) {
+////                if(Math.random() > optimizationCoefficient && deadParticles[i] != true){
+//                if(deadParticles[i] != true){
+//                    parent += '<div class="particle color1" id=\"part' + i + '" '
+//                                       + 'style=\"left:'+ (particlePositions[i] * scale + 48.5) +'%;'
+//                                       + 'top:' + (particlePositions[i+1] * topScale + 95) + '%;"></div>\n';
+////                    left = particlePositions[i] *scale + 48.5;
+////                    top = particlePositions[i+1] *topScale + 95;
+////                    $("#part" + i).css({
+////                        //"left": particlePositions[i] * 49.5 + 166,
+////                        //"top": particlePositions[i + 1] * -49.5 + 375
+////                        "left": particlePositions[i] *scale + 48.5 + "%",
+////                        "top": particlePositions[i+1] *topScale + 95 + "%"
+////                    });
+//                    if(particlePositions[i+1] < -13){
+//                        console.log(particlePositions[i+1]);
+//                        deadParticles[i] = true;
+//                    }
+//                }
+//            }
+//            parent += '</div>';
+//            
+////            console.log(parent);
+//            $('#particleHolder').html(parent);
         }
     }
     $("#beakerImage").css("transform", "rotate(" + (-1 * keyAng) + "deg)");
     if(position){
-        console.log(position);
         $("#beakerImage").css("left", (5 + position.x*4.875)+"%");
         $("#beakerImage").css("top", ((-position.y*6.1)+6.1)+"%");
     }
